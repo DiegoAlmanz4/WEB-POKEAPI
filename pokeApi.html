@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PokeWiki</title>
+<link rel="stylesheet" href="style.css"> <!--Esto conecta el archivo CSS -->
+</head>
+<body>  <!--Aqui es donde se muestra el contenido principal de la página -->
+
+<nav>
+  <div class="nav-logo">PokeApiSahur Hecho por Diego Almanza et Santiago Isaac</div>  <!--Titulo de la PokeApi -->
+  <div class="nav-links">
+    <button class="nav-btn active" onclick="showPage('catalog')">Catálogo</button> <!--Muestra el catálogo de Pokémon -->
+    <button class="nav-btn" onclick="showPage('search')">Buscar</button> <!--Muestra el formulario de búsqueda de Pokémon -->
+    <button class="nav-btn" onclick="showPage('moves')">Movimientos</button> <!--Muestra el formulario de búsqueda de movimientos -->
+    <button class="nav-btn" onclick="showPage('items')">Ítems</button> <!--Muestra el catálogo de ítems -->
+    <button class="nav-btn" onclick="showPage('team')" id="teamNav">Mi Equipo</button> <!--Muestra el formulario de búsqueda de mi equipo -->
+  </div>
+  <div class="nav-user" id="navUser">
+    <button class="btn btn-outline btn-sm" onclick="openLogin()">Iniciar Sesión</button> <!--Es el boton para iniciar sesión -->
+  </div>
+</nav>
+
+<div class="page active" id="page-catalog"> <!--El catalogo de tipos de Pokémon -->
+  <div style="display:flex; gap:12px; margin-bottom:16px; flex-wrap:wrap; align-items:center;">
+    <div class="filter-bar" style="flex:1;">
+      <select id="typeFilter" onchange="applyFilter()">
+        <option value="">Todos los tipos</option>
+        <option value="fire">Fuego</option>
+        <option value="water">Agua</option>
+        <option value="grass">Planta</option>
+        <option value="electric">Eléctrico</option>
+        <option value="psychic">Psíquico</option>
+        <option value="ice">Hielo</option>
+        <option value="dragon">Dragón</option>
+        <option value="dark">Siniestro</option>
+        <option value="fairy">Hada</option>
+        <option value="fighting">Lucha</option>
+        <option value="poison">Veneno</option>
+        <option value="ghost">Fantasma</option>
+        <option value="rock">Roca</option>
+        <option value="bug">Bicho</option>
+        <option value="normal">Normal</option>
+        <option value="flying">Volador</option>`
+        <option value="steel">Acero</option>
+        <option value="ground">Tierra</option>
+        <option value="ground">Sahur</option>
+      </select>
+      <select id="perPage" onchange="changePerPage()"> <!--Elementos por página-->
+        <option value="20">20 por página</option>
+        <option value="50">50 por página</option>
+        <option value="6 o 7">6 o 7 por página</option>
+      </select>
+    </div>
+  </div>
+  <div class="pokemon-grid" id="catalogGrid"></div>
+  <div class="pagination" id="catalogPagination"></div>
+</div>
+
+<div class="page" id="page-search"> <!--Formulario de búsqueda de Pokémon -->
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Nombre o número (#25)..." onkeydown="if(event.key==='Enter')searchPokemon()">
+    <button class="btn btn-primary" onclick="searchPokemon()">Buscar</button>
+    <button class="btn btn-secondary" onclick="randomPokemon()">Aleatorio</button>
+  </div>
+  <div id="searchResult"></div>
+</div>
+
+<div class="page" id="page-detail"> <!--Detalles del Pokémon seleccionado -->
+  <button class="back-btn" onclick="goBack()">← Volver</button>
+  <div id="detailContent"></div>
+</div>
+
+<div class="page" id="page-moves"> <!--Formulario de búsqueda de movimientos -->
+  <div class="search-bar">
+    <input type="text" id="moveInput" placeholder="Nombre del movimiento..." onkeydown="if(event.key==='Enter')searchMove()">
+    <button class="btn btn-primary" onclick="searchMove()">Buscar</button>
+  </div>
+  <div id="moveResult"></div>
+</div>
+
+<div class="page" id="page-items"><!--Formulario de búsqueda de ítems -->
+  <div class="search-bar">
+    <input type="text" id="itemInput" placeholder="Nombre del ítem..." onkeydown="if(event.key==='Enter')searchItem()">
+    <button class="btn btn-primary" onclick="searchItem()">Buscar</button>
+    <button class="btn btn-secondary" onclick="loadItemCatalog()">Ver catálogo</button>
+  </div>
+  <div id="itemResult"></div>
+</div>
+
+<div class="page" id="page-team"> <!--Formulario de búsqueda de equipos -->
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+    <h2 style="font-size:20px;">Mi Equipo <span style="color:#888; font-size:14px;">(máximo 6)</span></h2>
+    <button class="btn btn-danger btn-sm" onclick="clearTeam()">Limpiar equipo</button>
+  </div>
+  <div class="team-grid" id="teamGrid"></div>
+  <div class="section-card" style="margin-top:24px;">
+    <h3>Agregar al equipo</h3>
+    <div class="search-bar"> <!--Buscador para agregar Pokémon al equipo -->
+      <input type="text" id="teamSearchInput" placeholder="Nombre o número del Pokémon..." onkeydown="if(event.key==='Enter')teamSearch()">
+      <button class="btn btn-primary" onclick="teamSearch()">Agregar</button>
+    </div>
+    <div id="teamSearchResult"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="loginModal"> <!--Modulo de inicio de sesión  -->
+  <div class="modal-box">
+    <h2 id="loginTitle">Iniciar Sesión</h2>
+    <input type="text" id="loginUser" placeholder="Nombre de entrenador">
+    <input type="password" id="loginPass" placeholder="Contraseña">
+    <div id="loginError" style="color:#e63946; font-size:13px; margin-bottom:8px;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeLogin()">Cancelar</button>
+      <button class="btn btn-primary" onclick="doLogin()">Entrar</button>
+    </div>
+    <p style="font-size:12px; color:#888; margin-top:12px; text-align:center;">
+     Usuario: <strong>TUNGTUNG</strong> / Contraseña: <strong>SAHUR</strong> <!--Contraseña para Iniciar sesión-->
+    </p>
+  </div>
+</div>
+
+<script src="script.js"></script> <!--Esto conecta el archivo JavaScript -->
+</body>
+</html> <!--Hecho por Diego Almanza, Santiago Isaac -->
